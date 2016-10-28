@@ -28,7 +28,9 @@ class AppIndex extends React.Component {
 		this.openFile.bind(this)
 	}
 	componentWillMount() {}
-	componentDidMount() {}
+	componentDidMount() {
+
+	}
 	componentWillReceiveProps(newProps) {}
 	shouldComponentUpdate(newProps, newState, newContext) {
 		return !Map(this.props).equals(Map(newProps)) ||
@@ -407,6 +409,7 @@ class AppIndex extends React.Component {
 		win.nPath = path
 		win.nFs = fs
 		win.Buffer = Buffer
+		win.__dirname = __dirname;
 		if(!workdir) {
 			return;
 		}
@@ -442,7 +445,7 @@ class AppIndex extends React.Component {
 			window.open(`file://${fpath}`)
 			return;
 		}
-		if(/^(doc|docx|xls|xlsx)$/i.test(mode)) {
+		if(/^(doc|docx|xls|xlsx|eot|ttf|woff|woff2)$/i.test(mode)) {
 			return;
 		}
 		

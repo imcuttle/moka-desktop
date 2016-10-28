@@ -49,9 +49,9 @@ class Wrap extends React.Component {
 				<div id="wrap" className="animated fadeIn">
 					<div className="messagebox">
 						<h1 className="center"> <i className="fa fa-cog"></i>新建文章<i onClick={this.closeWrap.bind(this)}className="pointer fa fa-close right"></i></h1>
-						<div className="center">
+						<div className="center inputgroup">
 						<input ref="input" defaultValue="new" />
-						<span className="btn btn-prim" onClick={this.newArticle.bind(this)}>创建</span>
+						<span className="addon" onClick={this.newArticle.bind(this)}>创建</span>
 						</div>
 					</div>
 				</div>

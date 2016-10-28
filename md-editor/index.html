@@ -30,6 +30,8 @@
 <!-- <script type="text/javascript" src="diff_match_patch.js"></script> -->
 <script>
 !function (w, d) {
+
+
 	var editorDom = document.querySelector('#editor')
 	var editorTip = document.createElement('div')
 	editorTip.className = 'editor-tip'
@@ -81,7 +83,7 @@
 	w.localStorage['editor_fontsize'] && editor.setFontSize(Number(w.localStorage['editor_fontsize']));
 	editor.autosave = w.localStorage['editor_autosave']=='true'
 
-	var mode = w.localStorage['editor_mode'] || 'markdown'
+	var mode = 'markdown' //w.localStorage['editor_mode'] || 
     editor.getSession().setMode(`ace/mode/${mode}`)
     editor.getSession().setUseWrapMode(true);
 	function mydiff(baseText, text) {
@@ -280,6 +282,7 @@
     	bindKey: {win: 'Ctrl-B', mac: 'Command-B'},
     	exec: function(editor) {
     		editor.setFontSize(1+editor.getFontSize())
+    		w.localStorage['editor_fontsize'] = editor.getFontSize()
     	},
     	readOnly: false
     })
@@ -300,6 +303,7 @@
     	exec: function(editor) {
     		if(editor.getFontSize()<=12) return;
     		editor.setFontSize(editor.getFontSize()-1)
+    		w.localStorage['editor_fontsize'] = editor.getFontSize()
     	},
     	readOnly: false
     })
@@ -325,6 +329,9 @@
     })
     editorDom.addEventListener('contextmenu', (e) => {
     	w.handelContextmenu && w.handelContextmenu(e)
+    })
+    preview.addEventListener('contextmenu', (e) => {
+    	w.handelPreviewContextmenu && w.handelPreviewContextmenu(e)
     })
     
     editor._themes = [
@@ -485,7 +492,7 @@
     	return `<a href="${href}" target="_blank" >${text}</a>`
     }
 
-	var s = "markdown editor"//w.localStorage['editor_value'] || 
+	var s = w.localStorage['init_txt'] || "markdown editor"//
     editor.setValue(s)
 //    editor.focus()
 

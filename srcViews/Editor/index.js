@@ -7,6 +7,7 @@ const path = require('path')
 const {remote} = require('electron')
 const {Menu, MenuItem} = remote
 const editorMenu = new Menu()
+const previewMenu = new Menu()
 
 class Editor extends React.Component {
 	constructor(props) {
@@ -16,6 +17,7 @@ class Editor extends React.Component {
 	componentDidMount() {
 		const {iframe} = this.refs;
 		iframe.contentWindow.handelContextmenu = this.contextMenu.bind(this)
+		iframe.contentWindow.handelPreviewContextmenu = this.previewContextmenu.bind(this)
 	}
 	componentWillReceiveProps(newProps) {}
 	shouldComponentUpdate(newProps, newState, newContext) {
@@ -32,6 +34,28 @@ class Editor extends React.Component {
 		return (
 			<iframe ref="iframe" {...props}></iframe>
 		)
+	}
+
+	previewContextmenu(e) {
+		const {iframe} = this.refs;
+		const win = iframe.contentWindow
+		const editor = win.editor
+		if(!editor || !editor._themes) {
+			return;
+		}
+		if(previewMenu.items.length==0) {
+			previewMenu.append(new MenuItem({
+				label: '实时预览', 
+				click: function (menuItem, browserWindow, event) { 
+					editor.closePreview = !editor.closePreview
+				}.bind(this),
+				type: 'checkbox',
+				checked: !editor.closePreview
+			}))
+		}
+		e.stopPropagation()
+		e.preventDefault()
+		previewMenu.popup(remote.getCurrentWindow())
 	}
 	contextMenu(e) {
 

@@ -72,6 +72,8 @@ window.addEventListener('contextmenu', (e) => {
   	// menu.popup(remote.getCurrentWindow())
 }, true)
 
+var db = require('./db')
+db.set('init_txt', fs.readFileSync(path.join(__dirname, 'initTxt.txt')).toString())
 
 
 
