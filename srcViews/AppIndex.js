@@ -336,6 +336,7 @@ class AppIndex extends React.Component {
 		if(_new.classList.contains('disable')) {
 			return;
 		}
+		_new.classList.add('disable')
 		var cwd = db.get('work_directory');
 		if(cwd) {
 			let cp = spawn(['n', val], cwd, (error)=>{
@@ -365,6 +366,7 @@ class AppIndex extends React.Component {
 		if(shortcut.classList.contains('disable')) {
 			return;
 		}
+		shortcut.classList.add('disable')
 		var cwd = db.get('work_directory');
 		if(cwd) {
 			let cp = spawn(['d', '-g', '-b'], cwd, (error)=>{
