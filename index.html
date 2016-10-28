@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="asset/css/font-awesome.css">
+
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <!-- <script type="text/javascript" src="build/app.min.js"></script> -->
+  <script>
+    document.title = require('./package.json').name;
+
+    // You can also require other files to run in this process
+    require('./renderer.js')
+  </script>
+</html>

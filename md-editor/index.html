@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="utf-8">
+	<title>MarkDown Editor</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<style>
+		#editor {
+			/*font-family:monospace!important*/
+		}
+	</style>
+</head>
+<body>
+<!--<a style="position: absolute; top: 0;" href="file:///Users/baidu/WebstormProjects/funny-something/markdown-editor">查看本地图片</a>-->
+<div id="editor">
+
+</div>
+
+<div id="preview">
+<div id="resize"></div>
+<div class="preview markdown-body"></div>
+</div>
+
+<script src="src-noconflict/ace.js"></script>
+<!-- <script src="//cdn.bootcss.com/ace/1.2.5/mode-markdown.js"></script> -->
+<!-- <script src="//cdn.bootcss.com/ace/1.2.5/mode-autohotkey.js"></script> -->
+
+<script src="lib/marked.min.js"></script>
+<script type="text/javascript" src="lib/highlight.min.js"></script>
+<!-- <script type="text/javascript" src="diff_match_patch.js"></script> -->
+<script>
+!function (w, d) {
+	var editorDom = document.querySelector('#editor')
+	var editorTip = document.createElement('div')
+	editorTip.className = 'editor-tip'
+	var editorLeftTip = document.createElement('div')
+	editorLeftTip.className = 'editor-tip-left'
+	preview = document.querySelector('#preview')
+	var resize = document.querySelector('#resize')
+	function launchIntoFullscreen(element) {
+		if(element.requestFullscreen) {
+			element.requestFullscreen();
+		} else if(element.mozRequestFullScreen) {
+			element.mozRequestFullScreen();
+		} else if(element.webkitRequestFullscreen) {
+			element.webkitRequestFullscreen();
+		} else if(element.msRequestFullscreen) {
+			element.msRequestFullscreen();
+		}
+	}
+
+	d.body.addEventListener('mousedown', function(e) {
+		if(e.target.id === 'resize') {
+			e.target.isDown = true
+			resize.classList.remove('active')
+		}
+	}, false)
+	d.body.addEventListener('mouseup', function(e) {
+		resize.isDown = false
+		resize.classList.remove('active')
+	}, false)
+	d.body.addEventListener('mousemove', function(e) {
+		if(resize.isDown) {
+			var MINLEFT = w.innerWidth * .0 + 10,
+				MAXLEFT = w.innerWidth * 1 - 10;
+			var left = e.clientX <= MINLEFT ? MINLEFT : (e.clientX <= MAXLEFT ? e.clientX : MAXLEFT)
+
+			// editorDom.style.right = (w.innerWidth - left) + 'px'
+			editorDom.style.width = preview.style.left = left + 'px'
+			editor.resize(true)
+			resize.classList.add('active')
+			resize.style.left = preview.style.left = left + 'px' 
+		}
+	}, false)
+
+
+    editor = ace.edit("editor");
+    editor.$blockScrolling = Infinity
+    editor.setTheme(w.localStorage['editor_theme'] || "ace/theme/monokai");
+    
+	w.localStorage['editor_fontsize'] && editor.setFontSize(Number(w.localStorage['editor_fontsize']));
+	editor.autosave = w.localStorage['editor_autosave']=='true'
+
+	var mode = w.localStorage['editor_mode'] || 'markdown'
+    editor.getSession().setMode(`ace/mode/${mode}`)
+    editor.getSession().setUseWrapMode(true);
+	function mydiff(baseText, text) {
+		var index, isNoDiff = true;
+		text.split('').some(function(ch, i) {
+			if(i > baseText.length-1) {
+				index = i
+				isNoDiff = false
+				return true
+			}
+			if(ch != baseText[i]) {
+				index = i
+				isNoDiff = false
+				return true
+			}
+			index = i
+		})
+		return {
+			index: index,
+			isNoDiff: isNoDiff
+		}
+	}
+
+	editor.on('blur', function(e) {
+		//autosave
+    	if(editor.autosave) {
+	    	if(!editor.autosave_timer) {
+		    	editorLeftTip.innerText = '自动保存中...'
+		    	editor.autosave_timer = setTimeout(function() {
+		    		delete editor.autosave_timer
+		    		save();
+		    		editorLeftTip.innerText = '保存成功！'
+		    	}, 1000)
+	    	}
+    	} else {
+    		editorLeftTip.innerText = '自动保存已关闭'
+    	}
+	})
+
+    editor.on('change', function(e) {
+
+    	editorTip.innerText = this.getValue().length
+
+    	if(editor.closePreview) {
+    		return;
+    	}
+    	editor.changed = true
+
+    	preview.children[1].innerHTML = marked(this.getValue(), {renderer: renderer})
+
+    	var curText = preview.children[1].innerText.replace(/[\n\r\s]/g, '')
+
+    	if(editor.lastText) {
+    		/*
+    		var diff = dmp.diff_main(editor.lastText, curText)
+
+    		dmp.diff_cleanupEfficiency(diff)
+
+    		var modifyIndex = 0;
+    		var isNoDiff = true
+    		diff.some(function(d) {
+    			d[1] = d[1].replace(/[\n\s\t\r\b]/g, '')
+    			var l = d[1].length
+				modifyIndex += l ;
+    			if(d[0] == 0){
+    				return false;
+    			}
+    			isNoDiff = false
+    			return true;
+    		})
+    		*/
+    		var diff = mydiff(editor.lastText, curText)
+    		var modifyIndex = diff.index
+    		var isNoDiff = diff.isNoDiff
+    	}
+    	// console.log(curText, modifyIndex)
+    	editor.lastText = curText
+    	
+
+		if(modifyIndex) {
+			var findEl,s = ''
+			function explore (parentEl, index) {
+				[].slice.call(parentEl.childNodes).some(function(x) {
+					// console.info(x, index)
+					if(x.childElementCount>0) {
+						index = explore(x, index)
+					} else {
+						if(!!findEl) {
+							return true
+						}
+						if(x.tagName=='TEXTAREA') {
+							return;
+						}
+						var text = x.nodeType==3?x.nodeValue:x.innerText;
+						if(x.nodeType==8) {
+							text = x.nodeValue
+							console.log(text)
+						}
+						text = text.replace(/[\n\r\s]/g, '')
+						s += text
+						index += text.length
+
+						var fix = 0
+						if(x.nextElementSibling) {
+							var nextText = x.nextElementSibling.innerText;
+							// console.log('fix', text,' : ', nextText)
+							if(nextText[0]==text[text.length-1]) {
+								var a = nextText.match(new RegExp("^"+nextText[0]+"+"))
+								fix = a ? a[0].length : 0
+							}
+						}
+						if(index+fix>=modifyIndex) {
+							findEl = x;
+							return true;
+						}
+					}
+				})
+				return index
+			}
+			var index = explore(preview.children[1], 0)
+
+			if(preview.timer) {
+				clearTimeout(preview.timer)
+			}
+			if(!isNoDiff) {
+				if(!findEl || findEl.nodeType == 3) {
+					findEl = !findEl ? preview.children[1].lastElementChild : findEl.parentElement
+				}
+				if(findEl) {
+					if(findEl.parentElement.tagName == 'CODE')
+						findEl = findEl.parentElement
+					if(findEl.tagName == 'CODE')
+						findEl = findEl.parentElement
+					findEl.style.backgroundColor = 'rgb(217, 237, 247)'
+					preview.timer = setTimeout(function() {
+						findEl.style.backgroundColor = ''
+					}, 5000)
+
+					var r = findEl.getBoundingClientRect()
+
+					if(!(r.top>=-r.height && r.top<=w.innerHeight-r.height)) {
+						console.log('can\'t see!!', findEl, r.top, preview.children[1].clientHeight )
+						preview.scrollTop = findEl.offsetTop - r.height - 20
+					}
+				}
+			}
+
+		}
+    	renderer.headmap = {}
+
+
+
+    }.bind(editor))
+    editor.save = save;
+    function save() {
+    	// w.localStorage['editor_value'] = editor.getValue()
+    	// debugger;
+    	editor.changed = false;
+    	w.nFs.writeFileSync(w.localStorage['current_fpath'], editor.getValue())
+		w.localStorage['editor_theme'] = editor.getTheme()
+		w.localStorage['editor_fontsize'] = editor.getFontSize()
+		w.localStorage['editor_autosave'] = editor.autosave
+    }
+    // var dmp = new diff_match_patch()
+    editor.commands.addCommand({
+    	name: 'toggle_autosave',
+    	bindKey: {win: 'Ctrl-U', mac: 'Command-U'},
+    	exec: function(editor) {
+    		editor.autosave = !editor.autosave
+    		if(!editor.autosave)
+    			editorLeftTip.innerText = '自动保存已关闭'
+    		else
+    			editorLeftTip.innerText = '自动保存已启动'
+    	},
+    	readOnly: false
+    })
+	/*document.addEventListener('keydown', function (e) {
+		if(e.shiftKey && e.keyCode === 70) {
+//			launchIntoFullscreen(preview)
+			e.preventDefault()
+			preview.classList.toggle('full')
+			editorDom.classList.toggle('hide')
+			resize.classList.toggle('hide')
+		}
+	}, true)*/
+    editor.commands.addCommand({
+    	name: 'save',
+    	bindKey: {win: 'Ctrl-S', mac: 'Command-S'},
+    	exec: function(editor) {
+    		save()
+    	},
+    	readOnly: false
+    })
+    editor.commands.addCommand({
+    	name: 'bigger',
+    	bindKey: {win: 'Ctrl-B', mac: 'Command-B'},
+    	exec: function(editor) {
+    		editor.setFontSize(1+editor.getFontSize())
+    	},
+    	readOnly: false
+    })
+    editor.commands.addCommand({
+    	name: 'previewToggle',
+    	bindKey: {win: 'Ctrl-P', mac: 'Command-P'},
+    	exec: function(editor) {
+    		editor.closePreview = !editor.closePreview;
+    		alert('editor.closePreview: '+editor.closePreview);
+
+    		editorLeftTip.innerText = '同步预览已经'+(editor.closePreview?'关闭':'开启')
+    	},
+    	readOnly: false
+    })
+    editor.commands.addCommand({
+    	name: 'smaller',
+    	bindKey: {win: 'Ctrl-M', mac: 'Command-M'},
+    	exec: function(editor) {
+    		if(editor.getFontSize()<=12) return;
+    		editor.setFontSize(editor.getFontSize()-1)
+    	},
+    	readOnly: false
+    })
+    editor.commands.addCommand({
+    	name: 'changeTheme',
+    	bindKey: {win: 'Ctrl-K', mac: 'Command-K'},
+    	exec: function(editor) {
+			var themes = editor._themes
+
+    		var i = prompt('请输入主题标号(1-'+themes.length+')', 0)
+    		if(i==null) return;
+    		i = i<0 ? 0 : i
+    		i = i>=themes.length ? themes.length-1 : i
+    		editor.setTheme(themes[i])
+    		w.localStorage['editor_theme'] = themes[i]
+    		setTimeout(function() {
+    			editorTip.style.color = w.getComputedStyle(editorDom)['color']
+    			editorLeftTip.style.color = editorTip.style.color 
+    		}, 200)
+    		
+    	},
+    	readOnly: false
+    })
+    editorDom.addEventListener('contextmenu', (e) => {
+    	w.handelContextmenu && w.handelContextmenu(e)
+    })
+    
+    editor._themes = [
+		'ace/theme/ambiance',
+		'ace/theme/chrome',
+		'ace/theme/clouds',
+		'ace/theme/clouds_midnight',
+		'ace/theme/cobalt',
+		'ace/theme/crimson_editor',
+		'ace/theme/dawn',
+		'ace/theme/dreamweaver',
+		'ace/theme/eclipse',
+		'ace/theme/idle_fingers',
+		'ace/theme/iplastic',
+		'ace/theme/katzenmilch',
+		'ace/theme/kr_theme',
+		'ace/theme/kuroir',
+		'ace/theme/merbivore',
+		'ace/theme/merbivore_soft',
+		'ace/theme/pastel_on_dark',
+		'ace/theme/solarized_dark',
+		'ace/theme/solarized_light',
+		'ace/theme/sqlserver',
+		'ace/theme/textmate',
+		'ace/theme/tomorrow',
+		'ace/theme/tomorrow_night',
+		'ace/theme/tomorrow_night_blue',
+		'ace/theme/tomorrow_night_bright',
+		'ace/theme/tomorrow_night_eighties',
+		'ace/theme/vibrant_ink',
+		'ace/theme/xcode',
+		'ace/theme/chaos',
+		'ace/theme/monokai',
+		'ace/theme/terminal',
+		'ace/theme/twilight'
+	]
+
+    document.querySelector('.markdown-body')
+    	.addEventListener('click', function(e) {
+    		if(e.target.classList.contains('pre-before')) {
+    			var input = e.target.nextElementSibling
+    			input.style.display='inline';
+    			input.select();
+    			d.execCommand('copy')
+    			input.style.display='none';
+    			e.target.innerText = 'Copied'
+    			if(e.target.timer) clearTimeout(e.target.timer)
+    			e.target.timer = setTimeout(function(){
+    				e.target.innerText = "Copy"
+    			}, 2000)
+    		}
+    	}, false)
+
+    setTimeout(function () {
+    	var styles = getComputedStyle(editor.container)
+    	// preview.style.backgroundColor = styles['background-color']	
+    	editorTip.style.color = styles['color']
+    	editorLeftTip.style.color = styles['color']
+    	var c = editorDom.querySelector('.ace_scroller')
+    	c.appendChild(editorTip)
+    	c.appendChild(editorLeftTip)
+
+    	editorTip.innerText = editor.getValue().length
+
+    	editorDom.addEventListener('paste', function(e) {
+	    	if(e.target.tagName=='TEXTAREA') {
+		    	var items, pastedData, clipboardData;
+				// Get pasted data via clipboard API
+		        clipboardData = e.clipboardData || window.clipboardData;
+		        items = clipboardData.items;
+				
+		        [].slice.call(items).some(function(item) {
+		        	
+		        	if(/^image\//.test(item.type) && item.kind === 'file') {
+		        		// console.log(item);
+		        		e.preventDefault();
+		        		var blob = item.getAsFile();
+		        		var reader = new FileReader();
+		        		reader.onload = function(event){
+							post("/api/upload", reader.result ,function (data) {
+								console.log(data)
+								data = JSON.parse(data)
+								var url = data.message
+								document.execCommand('insertText', false, "![ClipboardImage]("+url+")");
+							})
+		                }
+		        		reader.readAsDataURL(blob);
+		        		return true
+		        	}
+		        })
+	        }
+	        // e.preventDefault()
+	        e.stopPropagation()
+	    }, true)
+    }, 600)
+    
+	w.addEventListener('load', function() {
+		var left = w.innerWidth * .5;
+		editorDom.style.width = preview.style.left = left + 'px'
+		editor.resize(true)
+		resize.style.left = preview.style.left = left + 'px' 
+	})
+	/*
+	marked.setOptions({
+        gfm: true,
+        tables: true,
+        breaks: false, //回车换行
+        pedantic: false,
+        sanitize: true,
+        smartLists: true,
+        smartypants: false,
+    });
+    */
+	var renderer = new marked.Renderer();
+	renderer.code=function (code,lang) {
+        var before = '<div class="pre-before">Copy</div>';
+
+        var input = d.createElement('textarea')
+        input.style.display='none'
+        input.innerHTML = code
+        
+        return '<pre>' + before + input.outerHTML + 
+            '<code>'+hljs.highlightAuto(code).value+'</code></pre>';
+    };
+    renderer.headmap = {}
+    renderer.heading = function (text, level) {
+    	var map = renderer.headmap;
+        var escapedText = text.toLowerCase();
+        if(!!map[text])
+            escapedText+='-'+map[text]++;
+        else
+            map[text]=1;
+        escapedText = ''
+        return '<h' + level + '><a name="' +
+            escapedText +
+            '" class="anchor" href="#' +
+            escapedText +
+            '"><span class="header-link"></span></a>' +
+            text + '</h' + level + '>';
+    };
+    renderer.image = function(href, title, text) {
+    	var wd = w.localStorage['current_fpath'] && w.localStorage['current_fpath'] || ''
+    	if(!href.startsWith('http')) {
+    		if(href.startsWith('/upload')) {
+    			return `<img src="file://${w.nPath.join(wd, '..', '..', href)}" alt=${text} />`
+    		}
+    		return `<img src="file://${w.nPath.join(wd, '..', href)}" alt=${text} />`
+    	}
+    	return `<img src="${href}" alt=${text} />`
+    }
+    renderer.link = function(href, title, text) {
+    	
+    	var wd = w.localStorage['current_fpath'] && w.localStorage['current_fpath'] || ''
+    	
+    	if(!href.startsWith('http')) {
+    		return `<a href="file://${w.nPath.join(wd, '..', href)}" target="_blank" >${text}</a>`
+    	}
+    	return `<a href="${href}" target="_blank" >${text}</a>`
+    }
+
+	var s = "markdown editor"//w.localStorage['editor_value'] || 
+    editor.setValue(s)
+//    editor.focus()
+
+	function post(url, data, cb) {
+		// var xhr = new XMLHttpRequest()
+		// xhr.open('POST', url, true)
+		// xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		// xhr.send(data)
+		// xhr.onreadystatechange = function() {
+		// 	if (xhr.readyState==4 && xhr.status==200) {
+		// 		cb(xhr.responseText)
+		// 	}
+		// }
+		if(!w.localStorage['current_fpath']) {
+			return;
+		}
+		var rlt = decodeBase64Image(data);
+		var imgPath = w.nPath.join(w.localStorage['current_fpath'], '..', '..', 'upload')
+		!w.nFs.existsSync(imgPath) && w.nFs.mkdirSync(imgPath);
+		var filename = `${Date.now()}.${rlt.type}`;
+		var absolutePath = w.nPath.join(imgPath, filename)
+		w.nFs.writeFile(absolutePath, rlt.data, function(err) {
+			cb(JSON.stringify({code: 200, message: `/upload/${filename}`}))
+		})
+
+	}
+
+	function decodeBase64Image (dataString) {
+		var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
+			response = {};
+
+		if (matches.length !== 3) {
+			return new Error('Invalid input string');
+		}
+
+		response.type = matches[1].split('/')[1];
+		response.data = new w.Buffer(matches[2], 'base64');
+
+		return response;
+	}
+
+}(window, document)
+
+</script>
+</body>
+</html>

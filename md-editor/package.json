@@ -1,0 +1,92 @@
+{
+  "_args": [
+    [
+      {
+        "name": "moyu-markdown-editor",
+        "raw": "moyu-markdown-editor@^1.0.16",
+        "rawSpec": "^1.0.16",
+        "scope": null,
+        "spec": ">=1.0.16 <2.0.0",
+        "type": "range"
+      },
+      "/Users/baidu/WebstormProjects/electron-quick-start"
+    ]
+  ],
+  "_from": "moyu-markdown-editor@>=1.0.16 <2.0.0",
+  "_id": "moyu-markdown-editor@1.0.17",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/moyu-markdown-editor",
+  "_nodeVersion": "6.2.2",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/moyu-markdown-editor-1.0.17.tgz_1477463268342_0.46733378642238677"
+  },
+  "_npmUser": {
+    "email": "492899414@qq.com",
+    "name": "moyuyc"
+  },
+  "_npmVersion": "3.9.5",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "moyu-markdown-editor",
+    "raw": "moyu-markdown-editor@^1.0.16",
+    "rawSpec": "^1.0.16",
+    "scope": null,
+    "spec": ">=1.0.16 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://registry.npmjs.org/moyu-markdown-editor/-/moyu-markdown-editor-1.0.17.tgz",
+  "_shasum": "0cf087cb8683705a9d5b25721fc7b943046489d2",
+  "_shrinkwrap": null,
+  "_spec": "moyu-markdown-editor@^1.0.16",
+  "_where": "/Users/baidu/WebstormProjects/electron-quick-start",
+  "author": {
+    "name": "moyuyc"
+  },
+  "bin": {
+    "md-editor": "server.js"
+  },
+  "bugs": {
+    "url": "https://github.com/moyuyc/markdown-editor/issues"
+  },
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "qiniu": "^6.1.11"
+  },
+  "description": "[SegumentFault](https://segmentfault.com/) 中的Markdown编辑器用户体验不错，比如",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "0cf087cb8683705a9d5b25721fc7b943046489d2",
+    "tarball": "https://registry.npmjs.org/moyu-markdown-editor/-/moyu-markdown-editor-1.0.17.tgz"
+  },
+  "gitHead": "06b30aa6e344b7c383c45c94bc4bf234b3195d51",
+  "homepage": "https://github.com/moyuyc/markdown-editor#readme",
+  "keywords": [
+    "markdown"
+  ],
+  "license": "ISC",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "email": "492899414@qq.com",
+      "name": "moyuyc"
+    }
+  ],
+  "name": "moyu-markdown-editor",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moyuyc/markdown-editor.git"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.17"
+}
