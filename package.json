@@ -11,7 +11,9 @@
     "dev": "babel srcViews -d views -w",
     "postinstall": "install-app-deps",
     "pack": "build --dir",
-    "dist": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron build -m --x64 --ia32"
+    "dist": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ build -mw --x64 --ia32",
+    "distm": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ build -m --x64 --ia32",
+    "distw": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ build -w --x64"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [

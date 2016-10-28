@@ -26,6 +26,9 @@ if(process.env.PACK) {
 	config.platform = process.env.PACK
 	if(process.env.PACK==='win32'){
 		config.icon = path.join(__dirname, 'build', 'icon.ico')
+		config.arch = 'all'
+	} else if(process.env.PACK==='all') {
+		config.arch = 'all'
 	}
 }
 

@@ -4,6 +4,9 @@
         .hide {
             display: none;
         }
+        #preview {
+        	overflow-x: hidden;
+        }
         #preview.full {
             position: absolute;
             left: 0!important;
@@ -54,7 +57,7 @@
 	    	border-left: 2px solid #dadada;
 	    }
 	    #preview {
-	    	overflow-y: scroll;
+	    	overflow-y: auto;
 	    	position: absolute;
 	    	right: 0;
 	    	/*left: 51%;*/

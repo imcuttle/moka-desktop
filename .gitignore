@@ -4,3 +4,6 @@ bower_components/
 views/
 .DS_Store
 .idea/
+
+Moka-Desktop-*
+Moka-Desktop-*/

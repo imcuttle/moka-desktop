@@ -127,7 +127,7 @@ class AppIndex extends React.Component {
 						} else {
 							dialog.showErrorBox(`init`, [error.message].join('\n'))
 						}
-						cp.kill('SIGHUP')
+						cp.kill('SIGINT')
 						init.classList.remove('disable')
 						this.syncTree_Editor()
 					})
@@ -161,7 +161,7 @@ class AppIndex extends React.Component {
 				} else {
 					dialog.showErrorBox(`generate`, [error.message].join('\n'))
 				}
-				cp.kill('SIGHUP')
+				cp.kill('SIGINT')
 				generate.classList.remove('disable')
 			})
 			
@@ -170,7 +170,7 @@ class AppIndex extends React.Component {
 				console.log(data);
 				utils.logs(data);
 				if(data.replace(/\s*$/, '').endsWith(`generate static pages done.`)) {
-					cp.kill('SIGHUP')
+					cp.kill('SIGINT')
 					generate.classList.remove('disable')
 				}
 			});
@@ -194,7 +194,7 @@ class AppIndex extends React.Component {
 					} else {
 						dialog.showErrorBox(`动态服务，端口${serverPort}`, [error.message].join('\n'))
 					}
-					cp.kill('SIGHUP')
+					cp.kill('SIGINT')
 					server.classList.remove('disable')
 				})
 				
@@ -218,7 +218,7 @@ class AppIndex extends React.Component {
 			this.vals.cpServer._window &&
 			!this.vals.cpServer._window.closed &&
 			this.vals.cpServer._window.close();
-			this.vals.cpServer.kill('SIGHUP');
+			this.vals.cpServer.kill('SIGINT');
 		}
 		server.classList.toggle('disable')
 	}
@@ -237,7 +237,7 @@ class AppIndex extends React.Component {
 						dialog.showErrorBox(`静态服务，端口${staticPort}`, [error.message].join('\n'))
 					}
 					staticServer.classList.remove('disable')
-					cp.kill('SIGHUP')
+					cp.kill('SIGINT')
 				})
 				this.vals.cpStaticServer = cp;
 				cp.stdout.on('data', (data)=>{
@@ -258,7 +258,7 @@ class AppIndex extends React.Component {
 			this.vals.cpStaticServer._window &&
 			!this.vals.cpStaticServer._window.closed &&
 			this.vals.cpStaticServer._window.close();
-			this.vals.cpStaticServer.kill('SIGHUP');
+			this.vals.cpStaticServer.kill('SIGINT');
 		}
 		
 		staticServer.classList.toggle('disable')
@@ -280,7 +280,7 @@ class AppIndex extends React.Component {
 				} else {
 					dialog.showErrorBox(`deploy`, [error.message].join('\n'))
 				}
-				cp.kill('SIGHUP')
+				cp.kill('SIGINT')
 				deploy.classList.remove('disable')
 			})
 			
@@ -310,7 +310,7 @@ class AppIndex extends React.Component {
 				} else {
 					dialog.showErrorBox(`bak`, [error.message].join('\n'))
 				}
-				cp.kill('SIGHUP')
+				cp.kill('SIGINT')
 				bak.classList.remove('disable')
 			})
 			
@@ -342,7 +342,7 @@ class AppIndex extends React.Component {
 				} else {
 					dialog.showErrorBox(`new`, [error.message].join('\n'))
 				}
-				cp.kill('SIGHUP')
+				cp.kill('SIGINT')
 				_new.classList.remove('disable')
 			})
 			
@@ -371,7 +371,7 @@ class AppIndex extends React.Component {
 				} else {
 					dialog.showErrorBox(`shortcut`, [error.message].join('\n'))
 				}
-				cp.kill('SIGHUP')
+				cp.kill('SIGINT')
 				shortcut.classList.remove('disable')
 			})
 			
