@@ -380,11 +380,18 @@ class AppIndex extends React.Component {
 				cp.kill('SIGINT')
 				shortcut.classList.remove('disable')
 			})
-			
+			var doneNum = 0;
 			cp.stdout.on('data', (data)=>{
 				data = data.toString()
 				console.log(data);
 				utils.logs(data);
+				if(/(Bak|Deploy) Done!$/.test(data.replace(/\s*$/, ''))) {
+					doneNum++;
+					if(doneNum===2) {
+						cp.kill('SIGINT')
+						shortcut.classList.remove('disable')
+					}
+				}
 			});
 			cp.stderr.on('data', (data) => {
 				data = data.toString()
@@ -465,6 +472,7 @@ class AppIndex extends React.Component {
 		// var oldSession = editor.session
 		aceEditor.setSession(newSession)
 		aceEditor.getSession().setMode(`ace/mode/${mode}`)
+		aceEditor.getSession().setUseWrapMode(true);
 		aceEditor.setValue(string)
 
 		aceEditor.changed = false;
