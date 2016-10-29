@@ -110,7 +110,7 @@
 	editor.on('blur', function(e) {
 		//autosave
     	if(editor.autosave) {
-	    	if(!editor.autosave_timer) {
+	    	if(!editor.autosave_timer && w.localStorage['current_fpath']!='') {
 		    	editorLeftTip.innerText = '自动保存中...'
 		    	editor.autosave_timer = setTimeout(function() {
 		    		delete editor.autosave_timer
@@ -242,7 +242,11 @@
     	// w.localStorage['editor_value'] = editor.getValue()
     	// debugger;
     	editor.changed = false;
-    	w.nFs.writeFileSync(w.localStorage['current_fpath'], editor.getValue())
+    	if(w.localStorage['current_fpath']!='') {
+    		w.nFs.writeFileSync(w.localStorage['current_fpath'], editor.getValue())	
+    		editorLeftTip.innerText = '保存成功!'
+    	}
+    	
 		w.localStorage['editor_theme'] = editor.getTheme()
 		w.localStorage['editor_fontsize'] = editor.getFontSize()
 		w.localStorage['editor_autosave'] = editor.autosave
@@ -494,6 +498,7 @@
 
 	var s = w.localStorage['init_txt'] || "markdown editor"//
     editor.setValue(s)
+    editor.changed = false;
 //    editor.focus()
 
 	function post(url, data, cb) {

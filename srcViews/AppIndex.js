@@ -103,7 +103,9 @@ class AppIndex extends React.Component {
 		menu.append(new MenuItem({
 			label: 'RefreshTree', 
 			click: function () { 
+				var tmp = db.get('current_fpath')
 				this.syncTree_Editor();
+				db.set('current_fpath', tmp);
 			}.bind(this)
 		}));
 		e.stopPropagation()
@@ -425,15 +427,15 @@ class AppIndex extends React.Component {
 		files.innerHTML = ''
 		files.appendChild(new JsTree(lists))
 
-		this.vals.watcher && this.vals.watcher.close()
-		this.vals.watcher = fs.watch(workdir, (eventType, filename) => {
-		  console.log(`event type is: ${eventType}`);
-		  if (filename) {
-		    console.log(`filename provided: ${filename}`);
-		  } else {
-		    console.log('filename not provided');
-		  }
-		});
+		// this.vals.watcher && this.vals.watcher.close()
+		// this.vals.watcher = fs.watch(workdir, (eventType, filename) => {
+		//   console.log(`event type is: ${eventType}`);
+		//   if (filename) {
+		//     console.log(`filename provided: ${filename}`);
+		//   } else {
+		//     console.log('filename not provided');
+		//   }
+		// });
 	}
 
 	openFile(fpath, el) {
