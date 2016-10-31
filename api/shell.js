@@ -1,6 +1,9 @@
 var child_process = require('child_process')
 var path = require('path')
 
+const ipcRenderer = require('electron').ipcRenderer;
+
+
 var execute = (addon, cwd, callback) => {
 	const cp = child_process.exec(`moka ${addon}`, {cwd: cwd}, (error, stdout, stderr) => {
 	  callback && callback(error, stdout, stderr)
@@ -17,13 +20,15 @@ var execute = (addon, cwd, callback) => {
 	return cp;
 }
 
-var processes = []
+// var processes = []
 
 
 function kill(pid) {
+
 	var i = processes.findIndex(x=>x.pid==pid);
 	if(i>=0) {
-		processes[i].kill('SIGHUP');
+		ipcRenderer.send('splice-process', i)
+		processes[i].kill('SIGINT');
 		processes.splice(i, 1);
 	}
 }
@@ -31,7 +36,8 @@ function kill(pid) {
 module.exports = {
 	shell: execute,
 	spawn: (args, cwd, callback)=>{
-		const cp = child_process.fork(path.join(__dirname, 'moka.js'), args, {cwd: cwd, 
+		const cp = child_process.fork(path.join(__dirname, 'moka.js'), args, {
+			cwd: cwd, 
 			stdio: [
 		      0, // Use parents stdin for child
 		      'pipe', // Pipe child's stdout to parent
@@ -41,20 +47,30 @@ module.exports = {
 		});
 		cp.on('close', ()=>{
 			callback && callback();
-			kill(cp.pid)
+			ipcRenderer.send('process-remove', cp.pid)
 		})
 		cp.on('error', (err)=>{
 			callback && callback(err);
-			kill(cp.pid)
+			ipcRenderer.send('process-remove', cp.pid)
 		})
 		cp.on('exit', ()=>{
 			callback && callback();
-			kill(cp.pid)
+			ipcRenderer.send('process-remove', cp.pid)
 		})
-		processes.push(cp);
+		console.log('push', cp.pid)
+		ipcRenderer.send('process-push', cp)
 		return cp;
 	},
 	getProcesses: ()=>{return processes}
 }
 
+/*process.on('exit', () => {
+  console.log('process quit', processes)
+  processes.forEach(proc=>proc.kill('SIGINT'))
+})
 
+process.on('disconnect', () => {
+	debugger;
+  console.log('process disconnect', processes)
+  processes.forEach(proc=>proc.kill('SIGINT'))
+})*/

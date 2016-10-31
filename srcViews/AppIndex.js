@@ -65,16 +65,16 @@ class AppIndex extends React.Component {
 			<div id="container">
 
 			  <div ref="head" id="head">
-			      <span ref="init" onClick={this.init.bind(this)} className="btn btn-prim">Init</span>
-			      <span ref="generate" onClick={this.generate.bind(this)} className="btn btn-prim">Generate</span>
-			      <span ref="server" onClick={this.server.bind(this)} className="btn btn-prim">Server</span>
-			      <span ref="staticServer" onClick={this.staticServer.bind(this)} className="btn btn-prim">StaticServer</span>
-			      <span ref="deploy" onClick={this.deploy.bind(this)} className="btn btn-prim">Deploy</span>
-			      <span ref="bak" onClick={this.bak.bind(this)} className="btn btn-prim">Bak</span>
-			      <span ref="new" onClick={this.newFn.bind(this)} className="btn btn-prim">New</span>
-			      <span ref="shortcut" onClick={this.shortcut.bind(this)} className="btn btn-prim">一键发布</span>
+			      <span ref="init" title="只需要初始化一次" onClick={this.init.bind(this)} className="btn btn-prim">初始化</span>
+			      <span ref="generate" title="生成静态资源" onClick={this.generate.bind(this)} className="btn btn-prim">生产</span>
+			      <span ref="server" title="动态服务" onClick={this.server.bind(this)} className="btn btn-prim">动态服务</span>
+			      <span ref="staticServer" title="静态服务" onClick={this.staticServer.bind(this)} className="btn btn-prim">静态服务</span>
+			      <span ref="deploy" title="发布至远端" onClick={this.deploy.bind(this)} className="btn btn-prim">发布</span>
+			      <span ref="bak" title="备份至远端" onClick={this.bak.bind(this)} className="btn btn-prim">备份</span>
+			      <span ref="new" title="新建文章" onClick={this.newFn.bind(this)} className="btn btn-prim">新建文章</span>
+			      <span ref="shortcut" title="生产=>发布=>备份" onClick={this.shortcut.bind(this)} className="btn btn-prim">一键发布</span>
 			      <span onClick={this.openSetting.bind(this)} className="btn btn-prim" title="设置"><i className="fa fa-cogs"></i></span>
-			      <span onClick={this.open.bind(this)} className="btn btn-prim" title="open">open</span>
+			      <span onClick={this.open.bind(this)} className="btn btn-prim" title="open">打开</span>
 			      <span className="toggle" onClick={this.toggleHead.bind(this)}><i className="fa fa-hand-o-left"></i></span>
 			  </div>
 			  <div id="main">

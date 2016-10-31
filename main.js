@@ -2,7 +2,6 @@ const electron = require('electron')
 // const mdEditor = require('moyu-markdown-editor')
 const path = require('path')
 const pack = require('./package.json')
-const shell = require('./api/shell')
 
 // Module to control application life.
 const app = electron.app
@@ -11,7 +10,25 @@ const protocol = electron.protocol
 const BrowserWindow = electron.BrowserWindow
 const nativeImage = require('electron').nativeImage
 
-const Tray = electron.Tray
+const ipcMain = require('electron').ipcMain;
+const processes = []
+
+ipcMain.on('process-push', (ev, proc) => {
+  console.log('process-push', proc.pid)
+  processes.push(proc);
+})
+ipcMain.on('process-splice', (ev, i) => {
+  console.log('process-splice', i)
+  processes.splice(i, 1);
+})
+ipcMain.on('process-remove', (ev, pid) => {
+  console.log('process-remove', pid)
+  var i = processes.findIndex(x=>x.pid==pid);
+  if(i>=0) {
+    // process.kill(processes[i].pid, 'SIGINT');
+    processes.splice(i, 1);
+  }
+})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -28,14 +45,12 @@ function createWindow () {
   // }, (error) => {
   //   if (error) console.error('Failed to register protocol')
   // })
-  const appIcon = new Tray(path.join(__dirname, 'moyu1.png'))
 
   mainWindow = new BrowserWindow({
     width: 1000, height: 600,
     defaultEncoding: 'utf-8',
     icon: path.join(__dirname, 'build', 'icon.icns')
   })
-  console.log(appIcon, mainWindow)
 
   mainWindow.setTitle(pack.name)
 
@@ -52,8 +67,8 @@ function createWindow () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    console.log('closed', shell.getProcesses())
-    shell.getProcesses().forEach(proc=>proc.kill('SIGHUP'))
+    console.log('closed', processes.length)
+    processes.forEach((proc, i)=>{process.kill(proc.pid, 'SIGINT'); processes.splice(i, 1)})
     mainWindow = null
   })
   console.log('platform: '+process.platform)
@@ -71,12 +86,13 @@ app.on('ready', createWindow)
 app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  console.log('window-all-closed', shell.getProcesses())
-  shell.getProcesses().forEach(proc=>proc.kill('SIGHUP'))
+  console.log('window-all-closed')
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
+
+
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
