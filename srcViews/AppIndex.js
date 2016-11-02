@@ -335,12 +335,13 @@ class AppIndex extends React.Component {
 	}
 	newArticle(val) {
 		const _new = this.refs.new;
-		if(_new.classList.contains('disable')) {
-			return;
-		}
-		_new.classList.add('disable')
+		// if(_new.classList.contains('disable')) {
+		// 	return;
+		// }
+		// _new.classList.add('disable')
 		var cwd = db.get('work_directory');
 		if(cwd) {
+			val = val.replace(/\s/g, '-')
 			let cp = spawn(['n', val], cwd, (error)=>{
 				if(!error) {
 					this.openFile(path.join(cwd, 'source', '_articles', `${val}.md`))
