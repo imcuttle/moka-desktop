@@ -122,6 +122,22 @@
     		editorLeftTip.innerText = '自动保存已关闭'
     	}
 	})
+	
+	d.body.addEventListener('dragover', function(evt) {
+		evt.stopPropagation();
+	    evt.preventDefault();
+	    evt.dataTransfer.dropEffect = 'none';
+	})
+	editorDom.addEventListener('dragover', function(evt) {
+		evt.stopPropagation();
+	    evt.preventDefault();
+	    evt.dataTransfer.dropEffect = 'copy';
+	})
+
+	editorDom.addEventListener('drop', function(evt) {
+		evt.stopPropagation();
+		uploadImage(evt.dataTransfer.items) && evt.preventDefault()
+	})
 
     editor.on('change', function(e) {
 
@@ -407,30 +423,32 @@
 		        clipboardData = e.clipboardData || window.clipboardData;
 		        items = clipboardData.items;
 				
-		        [].slice.call(items).some(function(item) {
-		        	
-		        	if(/^image\//.test(item.type) && item.kind === 'file') {
-		        		// console.log(item);
-		        		e.preventDefault();
-		        		var blob = item.getAsFile();
-		        		var reader = new FileReader();
-		        		reader.onload = function(event){
-							post("/api/upload", reader.result ,function (data) {
-								console.log(data)
-								data = JSON.parse(data)
-								var url = data.message
-								document.execCommand('insertText', false, "![ClipboardImage]("+url+")");
-							})
-		                }
-		        		reader.readAsDataURL(blob);
-		        		return true
-		        	}
-		        })
+		        uploadImage(items) && e.preventDefault()
 	        }
 	        // e.preventDefault()
 	        e.stopPropagation()
 	    }, true)
     }, 600)
+
+    function uploadImage(items) {
+    	return [].slice.call(items).some(function(item) {
+        	if(/^image\//.test(item.type) && item.kind === 'file') {
+        		// console.log(item);
+        		var blob = item.getAsFile();
+        		var reader = new FileReader();
+        		reader.onload = function(event){
+					post("/api/upload", reader.result ,function (data) {
+						console.log(data)
+						data = JSON.parse(data)
+						var url = data.message
+						document.execCommand('insertText', false, "![ClipboardImage]("+url+")");
+					})
+                }
+        		reader.readAsDataURL(blob);
+        		return true
+        	}
+        })
+    }
     
 	w.addEventListener('load', function() {
 		var left = w.innerWidth * .5;

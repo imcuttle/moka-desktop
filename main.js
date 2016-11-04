@@ -52,7 +52,7 @@ function createWindow () {
     icon: path.join(__dirname, 'build', 'icon.icns')
   })
 
-  mainWindow.setTitle(pack.name)
+  mainWindow.setTitle(pack.displayName)
 
   // mdEditor(9889, path.resolve('source', 'upload'));
   // and load the index.html of the app.

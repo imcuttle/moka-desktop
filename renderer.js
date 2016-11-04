@@ -75,7 +75,11 @@ window.addEventListener('contextmenu', (e) => {
 var db = require('./db')
 db.set('init_txt', fs.readFileSync(path.join(__dirname, 'initTxt.txt')).toString())
 
-
+document.body.addEventListener('dragover', function(evt) {
+	evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'none';
+})
 
 require('./views/AppIndex')
 
