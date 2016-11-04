@@ -37,7 +37,7 @@
   "license": "CC0-1.0",
   "dependencies": {
     "immutable": "^3.8.1",
-    "moka-cli": "^1.1.9",
+    "moka-cli": "^1.2.0",
     "react": "^15.3.2",
     "react-dom": "^15.3.2"
   },
