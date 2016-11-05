@@ -1,28 +1,26 @@
 {
   "name": "Moka-Desktop",
   "displayName": "Moka Desktop",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Moka Desktop",
   "main": "main.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --mini",
-    "package": "rm -rf Moka-Desktop-darwin-x64 && electron-packager . --platform darwin --icon build/icon.icns --overwrite --prune",
-    "p": "rm -rf Moka-Desktop-darwin-x64 && NODE_ENV=production node package.js",
+    "package": "electron-packager . --platform darwin --icon build/icon.icns --overwrite --prune",
+    "p": "NODE_ENV=production node package.js",
     "start": "electron .",
     "dev": "babel srcViews -d views -w",
-    "postinstall": "install-app-deps",
     "pack": "build --dir",
+    "install": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ npm --registry=https://registry.npm.taobao.org install",
     "dist": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ build -mw --x64 --ia32",
     "distm": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ build -m --x64 --ia32",
     "distw": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ build -w --x64"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/moyuyc/moka-desktop.git",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "Moka",
+    "Desktop"
   ],
   "build": {
     "appId": "com.electron.moka-desktop",
@@ -37,7 +35,7 @@
   "license": "CC0-1.0",
   "dependencies": {
     "immutable": "^3.8.1",
-    "moka-cli": "^1.2.1",
+    "moka-cli": "*",
     "react": "^15.3.2",
     "react-dom": "^15.3.2"
   },
