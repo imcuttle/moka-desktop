@@ -478,6 +478,16 @@
         return '<pre>' + before + input.outerHTML + 
             '<code>'+hljs.highlightAuto(code).value+'</code></pre>';
     };
+    renderer.listitem = function(text) {
+		if (/^\s*\[[x ]\]\s*/.test(text)) {
+			text = text
+		    .replace(/^\s*\[ \]\s*/, '<input type="checkbox" disabled/> ')
+		    .replace(/^\s*\[x\]\s*/, '<input type="checkbox" checked="true" disabled/> ');
+		    	return '<li style="list-style: none">' + text + '</li>';
+		    } else {
+		    	return '<li>' + text + '</li>';
+		}
+	};
     renderer.headmap = {}
     renderer.heading = function (text, level) {
     	var map = renderer.headmap;
