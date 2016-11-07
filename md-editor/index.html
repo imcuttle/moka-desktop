@@ -481,8 +481,8 @@
     renderer.listitem = function(text) {
 		if (/^\s*\[[x ]\]\s*/.test(text)) {
 			text = text
-		    .replace(/^\s*\[ \]\s*/, '<input type="checkbox" disabled/> ')
-		    .replace(/^\s*\[x\]\s*/, '<input type="checkbox" checked="true" disabled/> ');
+		    .replace(/^\s*\[ \]\s*/, '<input style="vertical-align: middle;" type="checkbox" disabled/> ')
+		    .replace(/^\s*\[x\]\s*/, '<input style="vertical-align: middle;" type="checkbox" checked="true" disabled/> ');
 		    	return '<li style="list-style: none">' + text + '</li>';
 		    } else {
 		    	return '<li>' + text + '</li>';
