@@ -1,3 +1,25 @@
+
+.suggest {
+  list-style: none;
+  /*display: none;*/
+  position: absolute;
+  max-height: 280px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  border-radius: 4px;
+  /*box-shadow: 2px 2px 3px #aaa;*/
+}
+.suggest li {
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-top: none;
+  padding: 4px 10px;
+  background-color: #fff;
+  text-align: left;
+}
+.suggest li:hover, .suggest li.active, .suggest li:active {
+    background-color: #eee;
+}
 * {
 	margin: 0;
 	padding: 0;

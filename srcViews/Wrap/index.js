@@ -19,16 +19,99 @@ class Wrap extends React.Component {
 	}
 	componentWillReceiveProps(newProps) {}
 	shouldComponentUpdate(newProps, newState, newContext) {
-		return !Map(this.props).equals(Map(newProps))
+		return !Map(this.props).equals(Map(newProps))||!Map(this.state).equals(Map(newState))
 	}
-	componentWillUpdate(newProps, newState, newContext) {}
-	componentDidUpdate(oldProps, oldState, oldContext) {}
+	componentWillUpdate(newProps, newState, newContext) {
+
+	}
+	componentDidUpdate(oldProps, oldState, oldContext) {
+		const {activeIndex} = this.state
+		if(activeIndex !== oldState.activeIndex) {
+			const {suggest} = this.refs;
+			let activeLi = suggest.querySelectorAll('li')[activeIndex]
+			// console.log(activeIndex>oldState.activeIndex?false:true)
+			activeLi.scrollIntoView(false)
+		}
+	}
 	componentWillUnmount() {}
 	static defaultProps = {}
-    state = {}
-    static propTypes = {}
+    state = {
+    	searchVal: '',
+    	activeIndex: -1
+    }
+    static propTypes = {
+
+    }
+    getSearchMatch() {
+    	const {searchVal} = this.state;
+    	if(searchVal==='') {
+    		return []
+    	}
+    	const {children} = this.props;
+    	const clone = Object.assign([], children);
+    	let keys = searchVal.split(/[\s\+]+/);
+    	let out = []
+    	keys.forEach(k => {
+    		let regS = new RegExp(k, "gi");
+    		for (var i = 0; i < clone.length; i++) {
+    			if(regS.test(clone[i])) {
+    				out.push(clone[i])
+    				clone.splice(i--, 1);
+    			}
+    		}
+    	})
+    	return out;
+    }
+    keyDown(e, words) {
+    	const activeIndex = this.state.activeIndex
+    	const {openFile, workdir} = this.props;
+    	if(e.keyCode === 38) {//up
+	    	if(activeIndex>0) {
+	    		this.setState({activeIndex: activeIndex-1})
+	    	}
+	    	e.preventDefault()
+	    } else if(e.keyCode === 40) {
+	    	if(activeIndex>=-1 && activeIndex<words.length-1) {
+	    		this.setState({activeIndex: activeIndex+1})
+	    	}
+	    	e.preventDefault()
+	    } else if(e.keyCode === 13 && !!words[activeIndex]) {
+	    	this.closeWrap();
+	    	openFile(path.join(workdir, 'source', '_articles', words[activeIndex]))
+	    }
+    }
 	render() {
-		const {workdir='', openWindow, _new, setParState, address, setting, openFile, staticPort, serverPort} = this.props;
+		const {workdir='', children, openWindow, searchPosts, _new, setParState, address, setting, openFile, staticPort, serverPort} = this.props;
+		const {activeIndex} = this.state;
+		if(searchPosts) {
+			var matcher = this.getSearchMatch();
+			return (
+				<div id="wrap" className="animated fadeIn">
+					<div className="messagebox">
+						<h1 className="center"> <i className="fa fa-search"></i>搜索文章<i onClick={this.closeWrap.bind(this)}className="pointer fa fa-close right"></i></h1>
+						<div className="center">
+							<div style={{width: '90%'}} style={{position: 'relative'}}>
+								<input style={{width: '100%', 'boxSizing': 'border-box', height: 30}} ref="inputSearch" autoFocus={true} onChange={(e)=>{
+									this.setState({'searchVal': e.target.value.trim(), activeIndex: -1})
+								}} onKeyDown={(e) => this.keyDown.call(this, e, matcher)}/>
+								{
+									<ul ref="suggest" className="suggest" style={{width: '100%', 'display': matcher.length==0&&'none'}}>
+									{
+										matcher.map((name, i)=>
+											<li onClick={e=>{
+												this.closeWrap();
+	    										openFile(path.join(workdir, 'source', '_articles', matcher[i]));
+											}} className={activeIndex===i && 'active'} key={name}>{name}</li>	
+										)
+									}
+									</ul>	
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			)
+		}
 		if(openWindow) {
 			return (
 				<div id="wrap" className="animated fadeIn">
@@ -106,7 +189,7 @@ class Wrap extends React.Component {
 	}
 	closeWrap(e) {
 		const {setParState} = this.props;
-		setParState({setting: false, _new: false, openWindow: false})
+		setParState({setting: false, _new: false, openWindow: false, searchPosts: false})
 	}
 
 	setDir() {

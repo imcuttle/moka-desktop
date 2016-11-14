@@ -59,7 +59,7 @@ class AppIndex extends React.Component {
     static propTypes = {}
 	render() {
 		const {...props} = this.props;
-		const {workdir, setting, _new, address, openWindow, logs, staticPort, serverPort} = this.state;
+		const {workdir, setting, searchPosts, _new, address, openWindow, logs, staticPort, serverPort} = this.state;
 
 		return (
 			<div id="container">
@@ -73,6 +73,7 @@ class AppIndex extends React.Component {
 			      <span ref="bak" title="备份至远端" onClick={this.bak.bind(this)} className="btn btn-prim">备份</span>
 			      <span ref="new" title="新建文章" onClick={this.newFn.bind(this)} className="btn btn-prim">新建文章</span>
 			      <span ref="shortcut" title="生产=>发布=>备份" onClick={this.shortcut.bind(this)} className="btn btn-prim">一键发布</span>
+			      <span ref="search" title="搜索" onClick={this.search.bind(this)} className="btn btn-prim">搜索</span>
 			      <span onClick={this.openSetting.bind(this)} className="btn btn-prim" title="设置"><i className="fa fa-cogs"></i></span>
 			      <span onClick={this.open.bind(this)} className="btn btn-prim" title="open">打开</span>
 			      <span className="toggle" onClick={this.toggleHead.bind(this)}><i className="fa fa-hand-o-left"></i></span>
@@ -88,8 +89,10 @@ class AppIndex extends React.Component {
 			  </div>
 
 			  
-			  {(!workdir||setting||_new||openWindow) && <Wrap 
+			  {(!workdir||setting||_new||openWindow||searchPosts) && <Wrap 
 			  		address={address}
+			  		children={fs.readdirSync(path.join(workdir, 'source', '_articles'))}
+			  		searchPosts={searchPosts}
 			  		_new={_new} newArticle={this.newArticle.bind(this)} openWindow={openWindow}
 				  	workdir={workdir} openFile={this.openFile.bind(this)} setting={setting} setParState={this.setState.bind(this)}
 				  	staticPort={staticPort} serverPort={serverPort}
@@ -111,6 +114,15 @@ class AppIndex extends React.Component {
 		e.stopPropagation()
 		e.preventDefault()
 		menu.popup(remote.getCurrentWindow())
+	}
+	search() {
+		const {init} = this.refs;
+		var cwd = db.get('work_directory');
+		if(!cwd) {
+			dialog.showMessageBox({type: 'error', message: `请先选定工作目录`, buttons: ['确定']})
+			return;
+		}
+		this.setState({searchPosts: true})
 	}
 	init() {
 
