@@ -60,7 +60,7 @@ class AppIndex extends React.Component {
 	render() {
 		const {...props} = this.props;
 		const {workdir, setting, searchPosts, _new, address, openWindow, logs, staticPort, serverPort} = this.state;
-
+		
 		return (
 			<div id="container">
 
@@ -91,7 +91,7 @@ class AppIndex extends React.Component {
 			  
 			  {(!workdir||setting||_new||openWindow||searchPosts) && <Wrap 
 			  		address={address}
-			  		children={fs.readdirSync(path.join(workdir, 'source', '_articles'))}
+			  		children={!!workdir?fs.readdirSync(path.join(workdir, 'source', '_articles')):null}
 			  		searchPosts={searchPosts}
 			  		_new={_new} newArticle={this.newArticle.bind(this)} openWindow={openWindow}
 				  	workdir={workdir} openFile={this.openFile.bind(this)} setting={setting} setParState={this.setState.bind(this)}

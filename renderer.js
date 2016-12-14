@@ -81,6 +81,8 @@ document.body.addEventListener('dragover', function(evt) {
     evt.dataTransfer.dropEffect = 'none';
 })
 
-require('./views/AppIndex')
+require("babel-core/register");
+
+require('./srcViews/AppIndex')
 
 
