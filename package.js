@@ -8,11 +8,11 @@ var config = {
 	icon: path.join(__dirname, 'build', 'icon.icns'),
 	overwrite: true,
 	ignore: [
-		/node_modules\/\.bin/, /srcViews/, /\.git/,
+		/node_modules\/\.bin/, /\.git/,
 		/node_modules\/electron/,
 		/node_modules\/electron-prebuilt/,
 		/node_modules\/electron-packager/,
-		/node_modules\/babel-/,
+		// /node_modules\/babel-p/, //preset/plugin
 		/node_modules\/moyu-markdown/,
 		/node_modules\/asar/,
 		/node_modules\/webpack-target-electron-renderer/,
