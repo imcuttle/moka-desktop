@@ -7,7 +7,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --mini",
     "package": "electron-packager . --platform darwin --icon build/icon.icns --overwrite --prune",
-    "p": "NODE_ENV=production node package.js",
+    "p": "node package.js",
     "start": "electron .",
     "dev": "babel srcViews -d views -w",
     "pack": "build --dir",
