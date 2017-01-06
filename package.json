@@ -11,7 +11,7 @@
     "start": "electron .",
     "dev": "babel srcViews -d views -w",
     "pack": "build --dir",
-    "install": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ npm --registry=https://registry.npm.taobao.org install",
+    "preinstall": "set ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/",
     "dist": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ build -mw --x64 --ia32",
     "distm": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ build -m --x64 --ia32",
     "distw": "ELECTRON_MIRROR=https://npm.taobao.org/mirrors/electron/ build -w --x64"
