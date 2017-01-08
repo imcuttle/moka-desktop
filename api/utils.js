@@ -46,7 +46,7 @@ const utils = {
 	},
 	logs: (data) => {
 		var p = document.createElement('p');
-		p.innerText = `${new Date().toLocaleString()} => ${data}`;
+		p.innerText = `> ${data}`;
 		var logs = document.querySelector('#logs');
 		// logs.classList.add('active')
 		var log = logs.querySelector('div')
