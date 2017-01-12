@@ -34,6 +34,9 @@ module.exports = {
                 if(err) {
                     reject(err);
                 } else {
+                    if(result.url) {
+                        result.url += '?imageslim';
+                    }
                     resolve(result);
                 }
             })    
