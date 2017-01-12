@@ -530,27 +530,27 @@
 //    editor.focus()
 
 	function post(url, data, cb) {
-		// var xhr = new XMLHttpRequest()
-		// xhr.open('POST', url, true)
-		// xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		// xhr.send(data)
-		// xhr.onreadystatechange = function() {
-		// 	if (xhr.readyState==4 && xhr.status==200) {
-		// 		cb(xhr.responseText)
-		// 	}
-		// }
 		if(!w.localStorage['current_fpath']) {
 			return;
 		}
 		var rlt = decodeBase64Image(data);
-		var imgPath = w.nPath.join(w.localStorage['current_fpath'], '..', '..', 'upload')
-		!w.nFs.existsSync(imgPath) && w.nFs.mkdirSync(imgPath);
-		var filename = `${Date.now()}.${rlt.type}`;
-		var absolutePath = w.nPath.join(imgPath, filename)
-		w.nFs.writeFile(absolutePath, rlt.data, function(err) {
-			cb(JSON.stringify({code: 200, message: `/upload/${filename}`}))
-		})
-
+        
+        var qn = w.nRequire('../api/qiniu');
+        if(qn.clientIsNull()) {
+    		var imgPath = w.nPath.join(w.localStorage['current_fpath'], '..', '..', 'upload');
+    		!w.nFs.existsSync(imgPath) && w.nFs.mkdirSync(imgPath);        
+    		var filename = `${Date.now()}.${rlt.type}`;
+    		var absolutePath = w.nPath.join(imgPath, filename)
+    		w.nFs.writeFile(absolutePath, rlt.data, function(err) {
+    			cb(JSON.stringify({code: 200, message: `/upload/${filename}`}))
+    		})
+        } else {
+            qn.upload(rlt.data)
+            .then(function (rlt) {
+                cb(JSON.stringify({code: 200, message: rlt.url}))
+            })
+            .catch(console.error);
+        }
 	}
 
 	function decodeBase64Image (dataString) {

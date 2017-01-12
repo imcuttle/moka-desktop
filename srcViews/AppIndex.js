@@ -7,6 +7,7 @@ const {dialog} = require('electron').remote
 
 const JsTree = require('../fe-js/tree')
 const db = require('../db')
+const qn = require('../api/qiniu')
 const fs = require('fs')
 const path = require('path')
 import utils from '../api/utils'
@@ -29,7 +30,8 @@ class AppIndex extends React.Component {
 	}
 	componentWillMount() {}
 	componentDidMount() {
-
+		const {workdir, qnOrigin, qnBucket, qnSK, qnAK, setting, searchPosts, _new, address, openWindow, logs, staticPort, serverPort} = this.state;
+		qn.setClient(qnAK, qnSK, qnBucket, qnOrigin);
 	}
 	componentWillReceiveProps(newProps) {}
 	shouldComponentUpdate(newProps, newState, newContext) {
@@ -54,12 +56,16 @@ class AppIndex extends React.Component {
     	openWindow: false,
 		staticPort: parseInt(db.get('moka_staticport')) || 9888,
 		serverPort: parseInt(db.get('moka_serverport')) || 9999,
-		address: db.get('moka_address') || ''
+		address: db.get('moka_address') || '',
+		qnAK: db.get('qn_ak') || '',
+		qnSK: db.get('qn_sk') || '',
+		qnBucket: db.get('qn_bucket') || '',
+		qnOrigin: db.get('qn_origin') || ''
     }
     static propTypes = {}
 	render() {
 		const {...props} = this.props;
-		const {workdir, setting, searchPosts, _new, address, openWindow, logs, staticPort, serverPort} = this.state;
+		const {workdir, qnOrigin, qnBucket, qnSK, qnAK, setting, searchPosts, _new, address, openWindow, logs, staticPort, serverPort} = this.state;
 		
 		return (
 			<div id="container">
@@ -90,7 +96,7 @@ class AppIndex extends React.Component {
 
 			  
 			  {(!workdir||setting||_new||openWindow||searchPosts) && <Wrap 
-			  		address={address}
+			  		address={address} qnOrigin={qnOrigin} qnBucket={qnBucket} qnSK={qnSK} qnAK={qnAK}
 			  		children={!!workdir?fs.readdirSync(path.join(workdir, 'source', '_articles')):null}
 			  		searchPosts={searchPosts}
 			  		_new={_new} newArticle={this.newArticle.bind(this)} openWindow={openWindow}
@@ -430,9 +436,10 @@ class AppIndex extends React.Component {
 		const {workdir} = this.state;
 		var win = editor.refs.iframe.contentWindow;
 		
-		win.nPath = path
-		win.nFs = fs
-		win.Buffer = Buffer
+		win.nPath = path;
+		win.nFs = fs;
+		win.Buffer = Buffer;
+		win.nRequire = require;
 		win.__dirname = __dirname;
 		if(!workdir) {
 			return;
