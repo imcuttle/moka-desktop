@@ -1,3 +1,7 @@
 # Moka-Desktop
 
 https://github.com/moyuyc/moka-desktop/releases
+
+## 支持七牛图床
+
+## 一键粘贴(gif图片请拖动)，拖动图片至编辑器即可插入图片
