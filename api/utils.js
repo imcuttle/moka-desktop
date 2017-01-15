@@ -3,6 +3,9 @@ const {getDirChildren} = require('./files')
 const path = require('path')
 
 const utils = {
+	md5: function (text) {
+        return require('crypto').createHash('md5').update(text).digest('hex');
+    },
 	getDirTreeList: (dir, filecb, dircb) => {
 		var lists = getDirChildren(dir);
 		return lists.map(x=>{

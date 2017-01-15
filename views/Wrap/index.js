@@ -155,7 +155,8 @@ var Wrap = function (_React$Component) {
 			    qnAK = _props2.qnAK,
 			    qnSK = _props2.qnSK,
 			    qnOrigin = _props2.qnOrigin,
-			    qnBucket = _props2.qnBucket;
+			    qnBucket = _props2.qnBucket,
+			    smmsChecked = _props2.smmsChecked;
 			var activeIndex = this.state.activeIndex;
 
 			if (searchPosts) {
@@ -401,7 +402,7 @@ var Wrap = function (_React$Component) {
 								_react2.default.createElement(
 									'center',
 									{ style: { marginBottom: 8 } },
-									'\u4EE5\u4E0B\u5173\u4E8E\u4E03\u725B\u5B58\u50A8\u7684\u914D\u7F6E\uFF0C\u82E5\u5B58\u5728\u4E00\u9879\u7A7A\uFF0C\u5219\u56FE\u7247\u4FDD\u5B58\u81F3\u672C\u5730'
+									'\u4EE5\u4E0B\u5173\u4E8E\u4E03\u725B\u5B58\u50A8\u7684\u914D\u7F6E\uFF0C\u82E5\u5B58\u5728\u4E00\u9879\u7A7A\uFF0C\u5219\u4F7F\u7528smms\u6216\u4FDD\u5B58\u672C\u5730'
 								),
 								_react2.default.createElement(
 									'div',
@@ -455,7 +456,26 @@ var Wrap = function (_React$Component) {
 											_this2.qnIptChange('qnOrigin', e.target.value.trim(), 'qn_origin');
 										} })
 								),
-								_react2.default.createElement('div', { className: 'center' })
+								_react2.default.createElement(
+									'center',
+									{ style: { marginBottom: 8, marginTop: 10 } },
+									'sm.ms\u514D\u8D39\u56FE\u5E8A\u914D\u7F6E\uFF08\u5F00\u542F\u540E\uFF0C\u5C0F\u4E8E5MB\u56FE\u7247\u4F7F\u7528smms, \u5426\u5219\u4F7F\u7528\u4E03\u725B\uFF09'
+								),
+								_react2.default.createElement(
+									'div',
+									null,
+									_react2.default.createElement(
+										'span',
+										null,
+										'\u5F00\u5173'
+									),
+									': ',
+									_react2.default.createElement('input', { type: 'checkbox', value: smmsChecked, checked: smmsChecked,
+										onChange: function onChange(e) {
+											setParState({ smmsChecked: !smmsChecked });db.set('smms_checked', !smmsChecked);
+										}
+									})
+								)
 							)
 						)
 					};

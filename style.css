@@ -111,6 +111,7 @@ body {
 	/*border-top: 2px solid #ccc;*/
 }
 input {
+  vertical-align: middle;
 	font-size: 14px;
   border-radius: 4px;
   display: inline-block;

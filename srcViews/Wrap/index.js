@@ -86,7 +86,7 @@ class Wrap extends React.Component {
 		const {
 			workdir='', children, openWindow, searchPosts, _new, setParState,
 			address, setting, openFile, staticPort, serverPort, 
-			qnAK, qnSK, qnOrigin, qnBucket
+			qnAK, qnSK, qnOrigin, qnBucket, smmsChecked
 		} = this.props;
 		const {activeIndex} = this.state;
 		if(searchPosts) {
@@ -179,13 +179,15 @@ class Wrap extends React.Component {
 						{workdir && <div><span>动态服务端口</span>: <input type="number" defaultValue={serverPort} onChange={(e)=>{setParState({serverPort: e.target.value}); db.set('moka_serverport', e.target.value)}}/></div>}
 						{workdir && <div><span>博客地址</span>: <input type="text" defaultValue={address} onChange={(e)=>{setParState({address: e.target.value}); db.set('moka_address', e.target.value)}}/></div>}
 						<hr style={{marginTop: 10, marginBottom: 8}}/>
-						<center style={{marginBottom: 8}}>以下关于七牛存储的配置，若存在一项空，则图片保存至本地</center>
+						<center style={{marginBottom: 8}}>以下关于七牛存储的配置，若存在一项空，则使用smms或保存本地</center>
 						<div><span>AccessKey</span>: <input type="text" defaultValue={qnAK} onChange={(e)=>{this.qnIptChange('qnAK', e.target.value.trim(), 'qn_ak');}}/></div>
 						<div><span>SecretKey</span>: <input type="text" defaultValue={qnSK} onChange={(e)=>{this.qnIptChange('qnSK', e.target.value.trim(), 'qn_sk');}}/></div>
 						<div><span>存储空间名</span>: <input type="text" defaultValue={qnBucket} onChange={(e)=>{this.qnIptChange('qnBucket', e.target.value.trim(), 'qn_bucket');}}/></div>
 						<div><span>外链URL</span>: <input type="text" defaultValue={qnOrigin} onChange={(e)=>{this.qnIptChange('qnOrigin', e.target.value.trim(), 'qn_origin');}}/></div>
-						<div className="center">
-						</div>
+						<center style={{marginBottom: 8, marginTop: 10}}>sm.ms免费图床配置（开启后，小于5MB图片使用smms, 否则使用七牛）</center>
+						<div><span>开关</span>: <input type="checkbox" value={smmsChecked} checked={smmsChecked}
+							onChange={(e)=>{setParState({smmsChecked: !smmsChecked}); db.set('smms_checked', !smmsChecked) }}
+						/></div>
 					</div>
 				</div>
 			)

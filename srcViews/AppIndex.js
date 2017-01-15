@@ -60,12 +60,13 @@ class AppIndex extends React.Component {
 		qnAK: db.get('qn_ak') || '',
 		qnSK: db.get('qn_sk') || '',
 		qnBucket: db.get('qn_bucket') || '',
-		qnOrigin: db.get('qn_origin') || ''
+		qnOrigin: db.get('qn_origin') || '',
+		smmsChecked: db.get('smms_checked')=='true'? true : false
     }
     static propTypes = {}
 	render() {
 		const {...props} = this.props;
-		const {workdir, qnOrigin, qnBucket, qnSK, qnAK, setting, searchPosts, _new, address, openWindow, logs, staticPort, serverPort} = this.state;
+		const {workdir, qnOrigin,smmsChecked, qnBucket, qnSK, qnAK, setting, searchPosts, _new, address, openWindow, logs, staticPort, serverPort} = this.state;
 		
 		return (
 			<div id="container">
@@ -98,7 +99,7 @@ class AppIndex extends React.Component {
 			  {(!workdir||setting||_new||openWindow||searchPosts) && <Wrap 
 			  		address={address} qnOrigin={qnOrigin} qnBucket={qnBucket} qnSK={qnSK} qnAK={qnAK}
 			  		children={!!workdir?fs.readdirSync(path.join(workdir, 'source', '_articles')):null}
-			  		searchPosts={searchPosts}
+			  		searchPosts={searchPosts} smmsChecked={smmsChecked}
 			  		_new={_new} newArticle={this.newArticle.bind(this)} openWindow={openWindow}
 				  	workdir={workdir} openFile={this.openFile.bind(this)} setting={setting} setParState={this.setState.bind(this)}
 				  	staticPort={staticPort} serverPort={serverPort}

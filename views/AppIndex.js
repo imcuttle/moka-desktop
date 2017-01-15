@@ -78,7 +78,8 @@ var AppIndex = function (_React$Component) {
 			qnAK: db.get('qn_ak') || '',
 			qnSK: db.get('qn_sk') || '',
 			qnBucket: db.get('qn_bucket') || '',
-			qnOrigin: db.get('qn_origin') || ''
+			qnOrigin: db.get('qn_origin') || '',
+			smmsChecked: db.get('smms_checked') == 'true' ? true : false
 		};
 		_this.vals = {};
 
@@ -139,6 +140,7 @@ var AppIndex = function (_React$Component) {
 			var _state2 = this.state,
 			    workdir = _state2.workdir,
 			    qnOrigin = _state2.qnOrigin,
+			    smmsChecked = _state2.smmsChecked,
 			    qnBucket = _state2.qnBucket,
 			    qnSK = _state2.qnSK,
 			    qnAK = _state2.qnAK,
@@ -233,7 +235,7 @@ var AppIndex = function (_React$Component) {
 				(!workdir || setting || _new || openWindow || searchPosts) && _react2.default.createElement(_Wrap2.default, {
 					address: address, qnOrigin: qnOrigin, qnBucket: qnBucket, qnSK: qnSK, qnAK: qnAK,
 					children: !!workdir ? fs.readdirSync(path.join(workdir, 'source', '_articles')) : null,
-					searchPosts: searchPosts,
+					searchPosts: searchPosts, smmsChecked: smmsChecked,
 					_new: _new, newArticle: this.newArticle.bind(this), openWindow: openWindow,
 					workdir: workdir, openFile: this.openFile.bind(this), setting: setting, setParState: this.setState.bind(this),
 					staticPort: staticPort, serverPort: serverPort

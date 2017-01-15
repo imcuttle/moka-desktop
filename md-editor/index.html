@@ -542,9 +542,9 @@
 			return;
 		}
 		var rlt = decodeBase64Image(data);
-
         var qn = w.nRequire('../api/qiniu');
-        if(qn.clientIsNull()) {
+        var smmsStatus = localStorage['smms_checked'] == 'true' ? true: false;
+        if(qn.clientIsNull() && !smmsStatus) {
     		var imgPath = w.nPath.join(w.localStorage['current_fpath'], '..', '..', 'upload');
     		!w.nFs.existsSync(imgPath) && w.nFs.mkdirSync(imgPath);        
     		var filename = `${Date.now()}.${rlt.type}`;
@@ -552,12 +552,26 @@
     		w.nFs.writeFile(absolutePath, rlt.data, function(err) {
     			cb(JSON.stringify({code: 200, message: `/upload/${filename}`}))
     		})
-        } else {
+        } else if (!smmsStatus) {
             qn.upload(rlt.data)
             .then(function (rlt) {
                 cb(JSON.stringify({code: 200, message: rlt.url}))
             })
             .catch(console.error);
+        } else {
+            var smms = w.nRequire('../api/smms');
+            smms.upload(rlt.data)
+            .then(function (url) {
+                if(url) {
+                    cb(JSON.stringify({code: 200, message: url}))
+                } else {
+                    qn.upload(rlt.data)
+                    .then(function (rlt) {
+                        cb(JSON.stringify({code: 200, message: rlt.url}))
+                    })
+                    .catch(console.error);
+                }
+            })
         }
 	}
 
