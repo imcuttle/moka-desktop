@@ -34,10 +34,3 @@ module.exports = {
         })
     }
 }
-
-var fs = require('fs');
-
-
-
-module.exports.upload(fs.readFileSync('/Users/moyu/my-code/NodeCode/blog/source/upload/1480242049359.png'))
-.then(console.log, console.error);
