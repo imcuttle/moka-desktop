@@ -152,7 +152,7 @@
         if (value.length >= 16000) {
             if (worker.postTimer == null) {
                 worker.postTimer = setTimeout(() => {
-                    worker.postMessage({markdown: value});
+                    worker.postMessage({markdown: this.getValue()});
                     delete worker.postTimer;
                 }, 1000); 
             }
