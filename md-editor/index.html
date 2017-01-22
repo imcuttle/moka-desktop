@@ -146,9 +146,20 @@
     	if(editor.closePreview) {
     		return;
     	}
-    	editor.changed = true
+    	editor.changed = true;
 
-        worker.postMessage({markdown: this.getValue()});
+        var value = this.getValue();
+        if (value.length >= 16000) {
+            if (worker.postTimer == null) {
+                worker.postTimer = setTimeout(() => {
+                    worker.postMessage({markdown: value});
+                    delete worker.postTimer;
+                }, 1000); 
+            }
+        } else {
+            worker.postMessage({markdown: value}); 
+        }
+        
 
 
     }.bind(editor))
