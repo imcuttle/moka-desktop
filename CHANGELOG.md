@@ -9,3 +9,6 @@
         1. support deploy & bak to be array
         2. fix some hooks bug
     2. add qiniu and smms which the way of import photo.
+
+- 2.2.0
+    **use webworker to marked**
