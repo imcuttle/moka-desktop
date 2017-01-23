@@ -37,7 +37,8 @@
 	editorTip.className = 'editor-tip'
 	var editorLeftTip = document.createElement('div')
 	editorLeftTip.className = 'editor-tip-left'
-	preview = document.querySelector('#preview')
+	preview = document.querySelector('#preview');
+    var mdBody = preview.children[1];
 	var resize = document.querySelector('#resize')
 	function launchIntoFullscreen(element) {
 		if(element.requestFullscreen) {
@@ -141,7 +142,7 @@
 
     editor.on('change', function(e) {
 
-    	editorTip.innerText = this.getValue().length
+    	editorTip.innerText = mdBody.innerText.length
 
     	if(editor.closePreview) {
     		return;
@@ -178,9 +179,9 @@
 		w.localStorage['editor_autosave'] = editor.autosave
     }
     function setMarkdownHtml (html) {
-        preview.children[1].innerHTML = html;
+        mdBody.innerHTML = html;
 
-        var curText = preview.children[1].innerText.replace(/[\n\r\s]/g, '')
+        var curText = mdBody.innerText.replace(/[\n\r\s]/g, '')
 
         if(editor.lastText) {
             /*
@@ -257,14 +258,14 @@
                 })
                 return index
             }
-            var index = explore(preview.children[1], 0)
+            var index = explore(mdBody, 0)
 
             if(preview.timer) {
                 clearTimeout(preview.timer)
             }
             if(!isNoDiff) {
                 if(!findEl || findEl.nodeType == 3) {
-                    findEl = !findEl ? preview.children[1].lastElementChild : findEl.parentElement
+                    findEl = !findEl ? mdBody.lastElementChild : findEl.parentElement
                 }
                 if(findEl) {
                     if(findEl.parentElement.tagName == 'CODE')
@@ -279,7 +280,7 @@
                     var r = findEl.getBoundingClientRect()
 
                     if(!(r.top>=-r.height && r.top<=w.innerHeight-r.height)) {
-                        console.log('can\'t see!!', findEl, r.top, preview.children[1].clientHeight )
+                        console.log('can\'t see!!', findEl, r.top, mdBody.clientHeight )
                         preview.scrollTop = findEl.offsetTop - r.height - 20
                     }
                 }
@@ -434,7 +435,7 @@
     	c.appendChild(editorTip)
     	c.appendChild(editorLeftTip)
 
-    	editorTip.innerText = editor.getValue().length
+    	editorTip.innerText = mdBody.innerText.length
 
     	editorDom.addEventListener('paste', function(e) {
 	    	if(e.target.tagName=='TEXTAREA') {
