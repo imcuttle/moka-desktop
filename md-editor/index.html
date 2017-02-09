@@ -141,9 +141,6 @@
 	})
 
     editor.on('change', function(e) {
-
-    	editorTip.innerText = mdBody.innerText.length
-
     	if(editor.closePreview) {
     		return;
     	}
@@ -180,6 +177,7 @@
     }
     function setMarkdownHtml (html) {
         mdBody.innerHTML = html;
+        editorTip.innerText = mdBody.innerText.length;
 
         var curText = mdBody.innerText.replace(/[\n\r\s]/g, '')
 
@@ -461,8 +459,11 @@
 					post("/api/upload", reader.result ,function (data) {
 						console.log(data)
 						data = JSON.parse(data)
-						var url = data.message
-						document.execCommand('insertText', false, "![ClipboardImage]("+url+")");
+						var url = data.url;
+                        var width = data.width;
+                        var height = data.height;
+                        // "![ClipboardImage]("+url+")"
+						document.execCommand('insertText', false, `<img src="${url}" width="${width}" height="${height}"/>`);
 					})
                 }
         		reader.readAsDataURL(blob);
@@ -518,6 +519,8 @@
 		}
 		var rlt = decodeBase64Image(data);
         var qn = w.nRequire('../api/qiniu');
+        var getImgSizeFromURL = w.nRequire('../api/image-size').getImgSizeFromURL;
+        var getImgSizeFromBuffer = w.nRequire('../api/image-size').getImgSizeFromBuffer;
         var smmsStatus = localStorage['smms_checked'] == 'true' ? true: false;
         if(qn.clientIsNull() && !smmsStatus) {
     		var imgPath = w.nPath.join(w.localStorage['current_fpath'], '..', '..', 'upload');
@@ -525,24 +528,29 @@
     		var filename = `${Date.now()}.${rlt.type}`;
     		var absolutePath = w.nPath.join(imgPath, filename)
     		w.nFs.writeFile(absolutePath, rlt.data, function(err) {
-    			cb(JSON.stringify({code: 200, message: `/upload/${filename}`}))
+                var s = getImgSizeFromBuffer(rlt.data)
+    			cb(JSON.stringify(Object.assign({code: 200, url: `/upload/${filename}`}, s) ))
     		})
         } else if (!smmsStatus) {
-            qn.upload(rlt.data)
+            var data = rlt.data;
+            qn.upload(data)
             .then(function (rlt) {
-                cb(JSON.stringify({code: 200, message: rlt.url}))
+                var s = getImgSizeFromBuffer(data);
+                cb(JSON.stringify({code: 200, url: rlt.url, width: s.width, height: s.height}))
             })
             .catch(console.error);
         } else {
             var smms = w.nRequire('../api/smms');
             smms.upload(rlt.data)
-            .then(function (url) {
-                if(url) {
-                    cb(JSON.stringify({code: 200, message: url}))
+            .then(function (json) {
+                if(json.url) {
+                    cb(JSON.stringify({code: 200, url: json.url, width: json.width, height: json.height}))
                 } else {
-                    qn.upload(rlt.data)
+                    var data = rlt.data;
+                    qn.upload(data)
                     .then(function (rlt) {
-                        cb(JSON.stringify({code: 200, message: rlt.url}))
+                        var s = getImgSizeFromBuffer(data);
+                        cb(JSON.stringify({code: 200, url: rlt.url, width: s.width, height: s.height}))
                     })
                     .catch(console.error);
                 }

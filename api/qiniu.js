@@ -11,6 +11,7 @@ module.exports = {
         bucket = bucket && bucket.trim();
         origin = origin && origin.trim();
         if(!accessKey || !secretKey || !bucket || !origin) {
+            client = null;
             return false;
         }
         client = qn.create({

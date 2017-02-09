@@ -26,7 +26,7 @@ module.exports = {
                 res.on('data', chunk => all+=chunk)
                 res.on('end', () => {
                     all = JSON.parse(all);
-                    resolve(all.code == 'success' && all.data && all.data.url)
+                    resolve(all.code == 'success' && all.data)
                 })
             }).on('error', () => resolve(false));
 
